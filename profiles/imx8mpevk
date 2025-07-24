@@ -1,0 +1,23 @@
+# ~/.conan2/profiles/imx8mp_sdk
+[settings]
+os              = Linux
+arch            = armv8
+build_type      = Release
+compiler        = gcc
+compiler.version= 13
+compiler.libcxx = libstdc++11
+
+# --- Chemins du SDK ---
+{% set sdk_root = "/opt/fsl-imx-xwayland/6.12-styhead/sysroots" %}
+{% set gcc_bin  = sdk_root + "/x86_64-pokysdk-linux/usr/bin/aarch64-poky-linux" %}
+{% set sysroot  = sdk_root + "/armv8a-poky-linux" %}
+
+[buildenv]
+PATH = /usr/bin:+
+CC   = /usr/bin/aarch64-linux-gnu-gcc
+CXX  = /usr/bin/aarch64-linux-gnu-g++
+[conf]
+tools.build:compiler_executables = {"c":"/usr/bin/aarch64-linux-gnu-gcc","cpp":"/usr/bin/aarch64-linux-gnu-g++"}
+tools.cmake.cmaketoolchain:system_name      = Linux
+tools.cmake.cmaketoolchain:system_processor = aarch64
+#tools.build:sysroot                          = /usr/aarch64-linux-gnu

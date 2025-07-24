@@ -1,0 +1,41 @@
+name: hello-arm64
+
+on:
+  push: { branches: [ master ] }
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install cross toolchain & deps
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
+          libc6-arm64-cross libc6-dev-arm64-cross \
+          libgcc-s1-arm64-cross \
+          libstdc++6-arm64-cross libstdc++-13-dev-arm64-cross \
+          ninja-build cmake dpkg-dev fakeroot
+        pipx install conan==2.*
+
+    - name: Conan install (cross)
+      run: |
+        conan install . \
+          --profile:build default \
+          --profile:host profiles/imx8mp_generic \
+          -of build --build=missing
+
+    - name: Configure & build & package
+      run: |
+        cmake -S . -B build -G Ninja \
+              -DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake
+        cmake --build build --target package
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: hello_deb
+        path: build/*.deb
