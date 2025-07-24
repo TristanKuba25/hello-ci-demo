@@ -26,7 +26,7 @@ jobs:
       run: |
         conan install . \
           --profile:build default \
-          --profile:host profiles/imx8mp_generic \
+          --profile:host profiles/imx8mpevk \
           -of build --build=missing
 
     - name: Configure & build & package
